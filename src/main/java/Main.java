@@ -142,8 +142,8 @@ public class Main {
             System.out.println("R block: " + blockR);
 
             encryptResult = test.doRound(blockL, blockR, shortenedKey);
-            System.out.println(encryptResult);
         }
+        System.out.println(encryptResult);
 
         for(int i=0; i<encryptResult.length(); i+=5){
             encryptResultList.add(encryptResult.substring(i, i+5));
@@ -244,7 +244,7 @@ public class Main {
     /**
      * @see Main#initializeMap(Map) - метод, формирующий структуру данных:
      * @see Main#mtk_2_map для последующего перевода слова в двоичный код и обратно
-     * @param map
+     * @param map - параметр, который принимает на вход структуру данных
      */
     public static void initializeMap(Map map){
         /*map.put("R","01010");
@@ -276,7 +276,7 @@ public class Main {
         map.put("Возврат каретки","00010");
         map.put("Цифры","11011");
         map.put("Пробел","00100");
-        map.put("Перевод строки","0000");
+        map.put("Перевод строки","00000");
         map.put("Р","01010");
         map.put("Й","11010");
         map.put("Н","00110");
@@ -306,9 +306,8 @@ public class Main {
         map.put("4","01010");
         map.put("Ч","01010");
         map.put("Ю","11010");
-        map.put(",","0110");
+        map.put(",","00110");
         map.put("Э","10110");
-        map.put(",","01110");
         map.put("(","11110");
         map.put("3","10000");
         map.put("Ш","01011");
