@@ -3,8 +3,28 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+
+/**
+ * @author Мабатов Никита
+ * @version 1.0
+ * @see Main - Класс, содержащий в себе все операции шифрования
+ * При создании нового объекта данного класса конструктор генерирует ключ.
+ */
 public class Main {
 
+    /**
+     * @see Main#mtk_2_map - структура данных, хранящая в себе телеграфный трёхрегистровый код МТК-2
+     * @see Main#word - атрибут, хранящий набор символов, которые необходимо зашифровать
+     * @see Main#letters - структура данных, содержащая разбитое по символам слово
+     * @see Main#values - структура данных, содержащая двоичный код для каждого символа из предыдущего массива
+     * @see Main#subBlockLength - константа, хранящая количество символов в каждом подблоке
+     * @see Main#keyList - структура данных, хранащая сгеннрированные на каждом уровне ключи
+     * @see Main#blockL - атрибут, хранящий набор битов левого блока на текущем раунде
+     * @see Main#blockR - атрибут, хранящий набор битов правого блока на текущем раунде
+     * @see Main#encryptResult - атрибут, хранящий набор битов в результате шифрования
+     * @see Main#encryptResultList - структура данных, хранящая набор битов в результате шифрования (посимвольно)
+     * @see Main#encryptResultValuesList - структура данных, хранящая набор зашифрованных символов
+     */
     private static Map<String, String> mtk_2_map = new HashMap<>();
     private static String word = "БОНЧ-БРУЕВИЧ";
     private static String[] letters = splitWordOnLetters(word);
@@ -17,13 +37,29 @@ public class Main {
     private static List<String> encryptResultList = new ArrayList<>();
     private static List<String> encryptResultValuesList = new ArrayList<>();
 
+    /**
+     * @see Main#main(String[] args) - основной метод, который служит точкой входа в программу
+     * @param args
+     * @throws IOException
+     *
+     * @see Main#start() - вызов метода, который содержит основную логику программы
+     */
     public static void main(String[] args) throws IOException {
 
         start();
     }
 
+    /**
+     * @see Main#start() - метод, который инициализирует массив МТК-2,
+     * переводит исходное слово в набор символов, затем переводит их
+     * в биты. После чего пользователем указывается количество раундов
+     * и запускается алгоритм сети Фейстеля.
+     */
     public static void start(){
 
+        /**
+         * @see Main#start()#initializeMap(Map)
+         */
         initializeMap(mtk_2_map);
 
         for(int i=0; i<letters.length; i++) {
@@ -41,7 +77,9 @@ public class Main {
         }
         System.out.println();
 
-
+        /**
+         * На данном этапе пользователю предлагается ввести количество раундов
+         */
         System.out.println("Write a number of the decription rounds:");
         int roundCounter = -1;
 
@@ -54,7 +92,9 @@ public class Main {
 
         scanner.close();
 
-
+        /**
+         * @see Main#encrypt(int)
+         */
         System.out.println("Number of rounds: " + roundCounter + "\n");
         try {
             encrypt(roundCounter);
@@ -64,10 +104,21 @@ public class Main {
 
     }
 
+    /**
+     * @see Main#encrypt(int) - метод, принимающий на вход один параметр и запускающий цикл раундов
+     * @param roundCounter - параметр, обозначающий количество раундов, которые необходимы для шифрования исходного слова
+     * @throws InterruptedException
+     */
     public static void encrypt(int roundCounter) throws InterruptedException {
 
         Main test = new Main();
 
+        /**
+         * @see Main#encrypt(int)#blockL - левый подблок, формируется в первой итерации, далее перенимается из результата
+         * прохождения раунда
+         * @see Main#encrypt(int)#blockR - правый подблок, формируется в первой итерации, далее перенимается из результата
+         * прохождения раунда
+         */
         blockL = new StringBuilder();
         blockR = new StringBuilder();
 
@@ -115,6 +166,13 @@ public class Main {
         }
     }
 
+    /**
+     * @see Main#doRound(StringBuilder, StringBuilder, String) - метод, формирующий логику для каждого конкретного раунда
+     * @param blockL - левый подблок для текущего раунда
+     * @param blockR - правый подблок для текущего раунда
+     * @param key - ключ для текущего раунда
+     * @return
+     */
     public String doRound(StringBuilder blockL, StringBuilder blockR, String key){
         String moduleSumWithKey = moduleSum(blockL.toString(), key);
         System.out.println("Module sum with key = " + moduleSumWithKey);
@@ -133,6 +191,12 @@ public class Main {
         return resultOfRound;
     }
 
+    /**
+     * @see Main#generateKey() - метод, который создает объект класса:
+     * @see DynamicKey, в котором генерируется ключ
+     * @return
+     * @throws InterruptedException
+     */
     public static String generateKey() throws InterruptedException {
         System.out.println("Delay " + Instant.now());
         TimeUnit.SECONDS.sleep(1);
@@ -143,6 +207,13 @@ public class Main {
         return key1.getKey();
     }
 
+    /**
+     * @see Main#moduleSum(String, String) - метод операции "сложение по модулю 2", необходимой для вычисления левого подблока
+     * в каждом раунде алгоритма шифрования
+     * @param blockL
+     * @param key
+     * @return
+     */
     public static String moduleSum(String blockL, String key){
 
         String[] blockLArr = blockL.split("");
@@ -170,6 +241,11 @@ public class Main {
         return letters;
     }
 
+    /**
+     * @see Main#initializeMap(Map) - метод, формирующий структуру данных:
+     * @see Main#mtk_2_map для последующего перевода слова в двоичный код и обратно
+     * @param map
+     */
     public static void initializeMap(Map map){
         /*map.put("R","01010");
         map.put("J","11010");
